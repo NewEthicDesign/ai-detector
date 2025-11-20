@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Hole the AI Art and Music Detector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            width: 400px;
+            min-height: 550px;
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            padding: 20px;
+        }
+        
+        .hidden { 
+            display: none !important; 
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+        
+        .header p {
+            font-size: 13px;
+            color: #86868b;
+            font-weight: 400;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: #1c1c1e;
+            padding: 4px;
+            border-radius: 10px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: #86868b;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .tab.active {
+            background: #007aff;
+            color: #fff;
+        }
+        
+        .tab:hover:not(.active) {
+            color: #fff;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: flex !important;
+            flex-direction:column;
+        }
+        
+        /* Upload Zone */
+        .upload-zone {
+            background: #1c1c1e;
+            border: 2px dashed #3a3a3c;
+            border-radius: 16px;
+            padding: 36px 20px;
+            text-align: center;
+            width: 100% !important;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+        }
+        
+        .upload-zone:hover {
+            background: #2c2c2e;
+            border-color: #007aff;
+        }
+        
+        .upload-zone svg {
+            width: 44px;
+            height: 44px;
+            color: #86868b;
+            margin-bottom: 12px;
+        }
+        
+        .upload-zone .title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .upload-zone .subtitle {
+            font-size: 12px;
+            color: #86868b;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 12px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #2c2c2e;
+        }
+
+        .divider span {
+            padding: 0 12px;
+            color: #86868b;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* URL Input Section */
+        .url-input-section {
+            margin-bottom: 16px;
+        }
+
+        .url-input-container {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .url-input {
+            flex: 1;
+            background: #1c1c1e;
+            border: 2px solid #2c2c2e;
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: #fff;
+            font-size: 13px;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #007aff;
+            background: #2c2c2e;
+        }
+
+        .url-input::placeholder {
+            color: #86868b;
+        }
+
+        .url-load-button {
+            background: #2c2c2e;
+            border: 2px solid #2c2c2e;
+            border-radius: 10px;
+            padding: 0 16px;
+            color: #007aff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .url-load-button:hover:not(:disabled) {
+            background: #3a3a3c;
+            border-color: #007aff;
+        }
+
+        .url-load-button:disabled {
+            color: #86868b;
+            cursor: not-allowed;
+        }
+        
+        /* Image Section */
+        .image-container {
+            background: #1c1c1e;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 14px;
+            max-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-container img,
+        .image-container canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 200px;
+            object-fit: contain;
+        }
+        
+        /* Audio Player */
+        .audio-container {
+            background: #1c1c1e;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+        
+        .audio-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .audio-icon {
+            width: 48px;
+            height: 48px;
+            background: #2c2c2e;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .audio-icon svg {
+            width: 24px;
+            height: 24px;
+            color: #007aff;
+        }
+        
+        .audio-details {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .audio-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .audio-size {
+            font-size: 12px;
+            color: #86868b;
+        }
+        
+        audio {
+            width: 100%;
+            height: 32px;
+        }
+        
+        /* Button */
+        .scan-button {
+            width: 100%;
+            background: #007aff;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 13px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        
+        .scan-button:hover:not(:disabled) {
+            background: #0066dd;
+            transform: scale(0.98);
+        }
+        
+        .scan-button:disabled {
+            background: #3a3a3c;
+            color: #86868b;
+            cursor: not-allowed;
+        }
+        
+        .scan-button svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* Progress */
+        .progress-container {
+            background: #1c1c1e;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+        
+        .progress-bar-bg {
+            background: #2c2c2e;
+            border-radius: 8px;
+            height: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #007aff, #5ac8fa);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 8px;
+        }
+        
+        .progress-text {
+            font-size: 12px;
+            color: #86868b;
+            text-align: center;
+        }
+        
+        /* Results */
+        .results {
+            background: #1c1c1e;
+            border-radius: 16px;
+            padding: 18px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .results.ai-detected {
+            border-color: #ff3b30;
+            background: rgba(255, 59, 48, 0.05);
+        }
+        
+        .results.human-created {
+            border-color: #34c759;
+            background: rgba(52, 199, 89, 0.05);
+        }
+        
+        .results-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .results-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+        
+        .results-icon.ai {
+            color: #ff3b30;
+        }
+        
+        .results-icon.human {
+            color: #34c759;
+        }
+        
+        .results-title {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.4px;
+        }
+        
+        .results-title.ai {
+            color: #ff3b30;
+        }
+        
+        .results-title.human {
+            color: #34c759;
+        }
+        
+        /* Pie Chart Section */
+        .chart-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 16px;
+            padding: 16px 0;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+        
+        #pieChart, #musicPieChart {
+            width: 100px;
+            height: 100px;
+        }
+        
+        .chart-center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .chart-percentage {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+        
+        .chart-label {
+            font-size: 9px;
+            color: #86868b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .chart-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        
+        .legend-color.ai {
+            background: #ff3b30;
+        }
+        
+        .legend-color.human {
+            background: #34c759;
+        }
+        
+        .legend-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .legend-label {
+            color: #86868b;
+            font-size: 11px;
+        }
+        
+        .legend-value {
+            font-weight: 600;
+            font-size: 12px;
+        }
+        
+        .results-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-top: 14px;
+            border-top: 1px solid #2c2c2e;
+        }
+        
+        .results-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        
+        .results-label {
+            color: #86868b;
+            font-weight: 400;
+        }
+        
+        .results-value {
+            color: #fff;
+            font-weight: 500;
+        }
+        
+        /* Animations */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #2c2c2e;
+            text-align: center;
+        }
+        
+        .footer p {
+            font-size: 10px;
+            color: #86868b;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Black Hole the AI Detector</h1>
+            <p>Analyze images & music for AI generation</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="image">🖼️ Art Image</button>
+            <button class="tab" data-tab="music">🎵 Music</button>
+        </div>
+
+        <!-- IMAGE TAB -->
+        <div class="tab-content active" id="imageTab">
+            <!-- Upload Zone -->
+            <label for="imageUpload" class="upload-zone">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <div class="title">Drop or click to upload</div>
+                <div class="subtitle">PNG, JPG, WebP, GIF</div>
+            </label>
+            <input type="file" id="imageUpload" accept="image/*" class="hidden">
+
+            <!-- Divider -->
+            <div class="divider">
+                <span>Or paste URL</span>
+            </div>
+
+            <!-- URL Input -->
+            <div class="url-input-section">
+                <div class="url-input-container">
+                    <input 
+                        type="text" 
+                        id="imageUrlInput" 
+                        class="url-input" 
+                        placeholder="https://example.com/image.jpg"
+                    >
+                    <button id="imageUrlLoadButton" class="url-load-button">Load</button>
+                </div>
+            </div>
+
+            <!-- Image Section -->
+            <div id="imageSection" class="hidden">
+                <div class="image-container">
+                    <img id="uploadedImage" style="display: block;">
+                    <canvas id="markedCanvas" style="display: none;"></canvas>
+                </div>
+
+                <!-- Scan Button -->
+                <button id="imageScanButton" class="scan-button">
+                    <svg id="imageScanIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <span id="imageScanText">Analyze Image</span>
+                </button>
+
+                <!-- Progress -->
+                <div id="imageProgressSection" class="progress-container hidden">
+                    <div class="progress-bar-bg">
+                        <div id="imageProgressBar" class="progress-bar-fill"></div>
+                    </div>
+                    <div id="imageProgressText" class="progress-text">Analyzing...</div>
+                </div>
+
+                <!-- Results -->
+                <div id="imageResultsSection" class="results hidden">
+                    <div class="results-header">
+                        <svg id="imageResultIcon" class="results-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+                        <h3 id="imageResultTitle" class="results-title"></h3>
+                    </div>
+                    
+                    <!-- Pie Chart -->
+                    <div class="chart-section">
+                        <div class="chart-container">
+                            <canvas id="pieChart" width="100" height="100"></canvas>
+                            <div class="chart-center-text">
+                                <div class="chart-percentage" id="imageChartPercentage">0%</div>
+                                <div class="chart-label">AI-Gen</div>
+                            </div>
+                        </div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-color ai"></div>
+                                <div class="legend-text">
+                                    <span class="legend-label">AI-Generated</span>
+                                    <span class="legend-value" id="imageAiPercent">0%</span>
+                                </div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color human"></div>
+                                <div class="legend-text">
+                                    <span class="legend-label">Human-Made</span>
+                                    <span class="legend-value" id="imageHumanPercent">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="results-details">
+                        <div class="results-row">
+                            <span class="results-label">Detection Method</span>
+                            <span id="imageMethodText" class="results-value"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MUSIC TAB -->
+        <div class="tab-content" id="musicTab">
+            <!-- Upload Zone -->
+            <label for="musicUpload" class="upload-zone">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                </svg>
+                <div class="title">Drop or click to upload</div>
+                <div class="subtitle">MP3, WAV, OGG, M4A</div>
+            </label>
+            <input type="file" id="musicUpload" accept="audio/*" class="hidden">
+
+            <!-- Divider -->
+            <div class="divider">
+                <span>Or paste URL</span>
+            </div>
+
+            <!-- URL Input -->
+            <div class="url-input-section">
+                <div class="url-input-container">
+                    <input 
+                        type="text" 
+                        id="musicUrlInput" 
+                        class="url-input" 
+                        placeholder="https://example.com/audio.mp3"
+                    >
+                    <button id="musicUrlLoadButton" class="url-load-button">Load</button>
+                </div>
+            </div>
+
+            <!-- Music Section -->
+            <div id="musicSection" class="hidden">
+                <div class="audio-container">
+                    <div class="audio-info">
+                        <div class="audio-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                            </svg>
+                        </div>
+                        <div class="audio-details">
+                            <div class="audio-name" id="audioFileName">audio.mp3</div>
+                            <div class="audio-size" id="audioFileSize">0 MB</div>
+                        </div>
+                    </div>
+                    <audio id="audioPlayer" controls></audio>
+                </div>
+
+                <!-- Scan Button -->
+                <button id="musicScanButton" class="scan-button">
+                    <svg id="musicScanIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <span id="musicScanText">Analyze Music</span>
+                </button>
+
+                <!-- Progress -->
+                <div id="musicProgressSection" class="progress-container hidden">
+                    <div class="progress-bar-bg">
+                        <div id="musicProgressBar" class="progress-bar-fill"></div>
+                    </div>
+                    <div id="musicProgressText" class="progress-text">Analyzing...</div>
+                </div>
+
+                <!-- Results -->
+                <div id="musicResultsSection" class="results hidden">
+                    <div class="results-header">
+                        <svg id="musicResultIcon" class="results-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+                        <h3 id="musicResultTitle" class="results-title"></h3>
+                    </div>
+                    
+                    <!-- Pie Chart -->
+                    <div class="chart-section">
+                        <div class="chart-container">
+                            <canvas id="musicPieChart" width="100" height="100"></canvas>
+                            <div class="chart-center-text">
+                                <div class="chart-percentage" id="musicChartPercentage">0%</div>
+                                <div class="chart-label">AI-Gen</div>
+                            </div>
+                        </div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-color ai"></div>
+                                <div class="legend-text">
+                                    <span class="legend-label">AI-Generated</span>
+                                    <span class="legend-value" id="musicAiPercent">0%</span>
+                                </div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color human"></div>
+                                <div class="legend-text">
+                                    <span class="legend-label">Human-Made</span>
+                                    <span class="legend-value" id="musicHumanPercent">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="results-details">
+                        <div class="results-row">
+                            <span class="results-label">Detection Method</span>
+                            <span id="musicMethodText" class="results-value"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Powered by AI detection models<br>Privacy-first • No data stored</p>
+        </div>
+    </div>
+
+    <script src="detector.js"></script>
+</body>
+</html>
