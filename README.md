@@ -49,3 +49,62 @@ By default, the tool uses **free Hugging Face inference endpoints**, but users m
 1. Download or clone the repository:  
    ```bash
    git clone https://github.com/YOUR-USERNAME/ai-detector.git
+
+   Open chrome://extensions/
+
+Enable Developer Mode (toggle in top right).
+Click Load unpacked.
+Select the project folder.
+
+Firefox
+Open about:debugging#/runtime/this-firefox
+Click Load Temporary Add-on
+Select the manifest.json inside the project folder.
+
+⚡ Features
+Detect AI-generated images
+Detect AI-generated audio / music
+Works offline except for API calls
+API-agnostic (you can add more detection services)
+Lightweight, fast popup UI
+Free to use and modify
+BSD-3 License (open-source friendly)
+
+Extending the Tool (Developers)
+You can easily add more host permissions to support more detection models.
+Example (in manifest.json):
+
+"host_permissions": [
+  "https://*.huggingface.co/*",
+  "https://your-custom-ai-endpoint.com/*"
+]
+
+To add your own API key or endpoint, modify:
+/scripts/detect-image.js
+/scripts/detect-audio.js
+/scripts/config.js
+This tool is designed to be fully pluggable.
+
+API Usage (Hugging Face)
+This extension uses the free Hugging Face inference API.
+You may replace the public endpoints with a private key for more reliable throughput:
+
+const HF_KEY = "hf_XXXXXXXXXXXXXXXXXXXXXXXX";
+Or add an .env flow if integrating a backend server.
+
+🛡️ License
+Copyright (c) 2025, <copyright holder>
+All rights reserved.
+
+This source code is licensed under the BSD-style license found in the
+LICENSE file in the root directory of this source tree.
+
+🙌 Credits
+Created by New Ethic Design
+
+Demo
+Try the popup interface directly:
+👉 https://newethicdesign.github.io/ai-detector/popup.html
+
+
+
