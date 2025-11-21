@@ -52,23 +52,23 @@ By default, the tool uses **free Hugging Face inference endpoints**, but users m
 
    Open chrome://extensions/
 
-Enable Developer Mode (toggle in top right).
-Click Load unpacked.
-Select the project folder.
+2. Enable Developer Mode (toggle in top right).
+3. Click Load unpacked.
+4. Select the project folder.
 
 Firefox
-Open about:debugging#/runtime/this-firefox
-Click Load Temporary Add-on
-Select the manifest.json inside the project folder.
+1. Open about:debugging#/runtime/this-firefox
+2. Click Load Temporary Add-on
+3. Select the manifest.json inside the project folder.
 
 ⚡ Features
-Detect AI-generated images
-Detect AI-generated audio / music
-Works offline except for API calls
-API-agnostic (you can add more detection services)
-Lightweight, fast popup UI
-Free to use and modify
-BSD-3 License (open-source friendly)
+- Detect AI-generated images
+- Detect AI-generated audio / music
+- Works offline except for API calls
+- API-agnostic (you can add more detection services)
+- Lightweight, fast popup UI
+- Free to use and modify
+- BSD-3 License (open-source friendly)
 
 Extending the Tool (Developers)
 You can easily add more host permissions to support more detection models.
@@ -80,9 +80,9 @@ Example (in manifest.json):
 ]
 
 To add your own API key or endpoint, modify:
-/scripts/detect-image.js
-/scripts/detect-audio.js
-/scripts/config.js
+- /scripts/detect-image.js
+- /scripts/detect-audio.js
+- /scripts/config.js
 This tool is designed to be fully pluggable.
 
 API Usage (Hugging Face)
