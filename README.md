@@ -102,7 +102,7 @@ LICENSE file in the root directory of this source tree.
 🙌 Credits
 Created by New Ethic Design
 
-Demo
+### ⚡ DEMO
 Try the popup interface directly:
 👉 https://newethicdesign.github.io/ai-detector/popup.html
 
