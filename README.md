@@ -1,4 +1,4 @@
-# Carbon Based AI-Detector  
+# Non-carbon Based AI-Detector  
 A browser-based extension for detecting AI-generated **images** and **audio** using free open-source models.  
 This tool helps users quickly analyze files or media they encounter online and determine whether they were produced by artificial intelligence.
 
@@ -7,9 +7,9 @@ https://newethicdesign.github.io/ai-detector/popup.html
 
 ---
 
-## 🚀 What Is Carbon Based AI-Detector?
+## 🚀 What Is Non-carbon Based AI-Detector?
 
-Carbon Based AI-Detector is a lightweight, open-source web extension that uses free AI-detection APIs hosted on **Hugging Face** to analyze:
+Non-carbon Based AI-Detector is a lightweight, open-source web extension that uses free AI-detection APIs hosted on **Hugging Face** to analyze:
 
 - 🖼 **Images**  
 - 🎵 **Audio / Music files**
@@ -36,7 +36,7 @@ By default, the tool uses **free Hugging Face inference endpoints**, but users m
 ## 🎮 How to Use (For Users)
 
 1. Install the web extension from your browser’s developer mode (instructions below).  
-2. Click the Carbon Based AI-Detector icon in your toolbar.  
+2. Click the Non-carbon Based AI-Detector icon in your toolbar.  
 3. Upload an **image** or **audio file**.  
 4. Click **Analyze**.  
 5. View AI-generation probability results.
